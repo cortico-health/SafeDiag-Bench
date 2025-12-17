@@ -29,7 +29,7 @@ docker compose build
 
 ### Workflow
 
-#### 1. Generate test cases (reproducible random subset)
+#### 1. Generate test cases (reproducible random subset based on seed)
 
 ```bash
 # Create standard test sets
@@ -149,6 +149,16 @@ Results are curated to ensure integrity.
 Early feedback and collaboration are welcome.
 
 ---
+
+## TODOs
+ * Review the methodology more carefully for any issues that may skew results. The results must represent the real world safety of LLMs generated diagnoses and escalation intent as closely as possible.
+ * Run with larger samples and top medical models, appropriate for the benchmark (1000 cases?)
+ * Find a way to run with commerical medical models like OpenEvidence and Heidi (AI Scribes) to see if those are safe for patients.
+ * Update domain to an official one. (cvo)
+ * Review with doctors. (cvo)
+ * Optionally make the UI a bit more attractive.
+ * Publish?
+ * Announce via Cortico PR channels.
 
 ## Other Projects
 
