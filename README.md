@@ -4,8 +4,8 @@
 
 A safety-first benchmark for evaluating large language models (LLMs) used as **clinician-facing diagnostic decision support tools**.
 
-> 📖 **[Read the Full Methodology](methodology.html)**  
-> For a detailed explanation of the safety testing framework, scoring logic, and design principles, please see our [methodology page](methodology.html).
+> 📖 **[View the Leaderboard & Methodology](http://localhost:18080)**  
+> For a detailed explanation of the safety testing framework, scoring logic, and design principles, please see the [methodology page](http://localhost:18080/methodology.html) on the local server.
 
 This benchmark explicitly measures **Diagnostic usefulness** and **Safety-critical escalation behavior**. Unsafe behavior is surfaced, not averaged away.
 
