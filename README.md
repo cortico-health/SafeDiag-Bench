@@ -17,7 +17,7 @@ This benchmark explicitly measures **Diagnostic usefulness** and **Safety-critic
 
 * Docker and Docker Compose
 * OpenRouter API key (for inference)
-* Download ICD10 code reference - to data/section111_valid_icd10_october2025.xlsx
+* Download [ICD10 code reference](https://www.cms.gov/files/document/valid-icd-10-list.xlsx-0) - to data/section111_valid_icd10_october2025.xlsx
 * Download [DDXPlus dataset](https://figshare.com/articles/dataset/DDXPlus_Dataset_English_/22687585) and extract to data/ddxplus_v0
 
 ```bash
