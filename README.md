@@ -1,4 +1,4 @@
-# SafeDiag-Bench
+# MedSafe-Dx
 
 ## Clinical Diagnostic Assistant Safety Benchmark
 

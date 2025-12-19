@@ -44,5 +44,7 @@ services:
     volumes:
       - ./leaderboard:/app/leaderboard
       - ./README.md:/app/README.md
+      - ./web/main.py:/app/main.py
+      - ./web/static:/app/static
     environment:
       - PYTHONUNBUFFERED=1

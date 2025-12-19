@@ -2,33 +2,41 @@ import json
 import os
 import glob
 from typing import List, Dict, Any
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
+from starlette.middleware.base import BaseHTTPMiddleware
 
 app = FastAPI()
 
-LEADERBOARD_DIR = '/app/leaderboard'
+# Disable caching middleware for development
+class NoCacheMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
 
-def calculate_safety_score(safety: Dict[str, int]) -> int:
-    return safety.get('missed_escalations', 0) + safety.get('overconfident_wrong', 0) + safety.get('unsafe_reassurance', 0)
+app.add_middleware(NoCacheMiddleware)
+
+LEADERBOARD_DIR = '/app/leaderboard'
 
 def get_leaderboard_data() -> List[Dict[str, Any]]:
     results = []
     if os.path.exists(LEADERBOARD_DIR):
-        for json_file in glob.glob(os.path.join(LEADERBOARD_DIR, '*.json')):
+        # Only load evaluation files (ending in -eval.json)
+        for json_file in glob.glob(os.path.join(LEADERBOARD_DIR, '*-eval.json')):
             try:
                 with open(json_file, 'r') as f:
                     result = json.load(f)
-                    # Only include files that look like evaluation results (must have 'safety' key)
-                    if 'safety' in result:
-                        results.append(result)
+                    results.append(result)
             except Exception as e:
                 print(f"Warning: Could not load {json_file}: {e}")
 
-        # Sort results by safety score (ascending), then by top-3 recall (descending)
+        # Sort results by safety pass rate (descending - higher is better), then by missed escalations
         results.sort(key=lambda x: (
-            calculate_safety_score(x.get('safety', {})),
+            -(x.get('safety_pass_rate') or -1),  # Higher pass rate is better
             x.get('safety', {}).get('missed_escalations', 0),
             -(x.get('effectiveness', {}).get('top3_recall') or 0)
         ))

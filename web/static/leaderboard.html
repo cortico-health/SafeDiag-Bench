@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SafeDiag-Bench Leaderboard</title>
+    <title>MedSafe-Dx Leaderboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,44 +15,46 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: white;
             min-height: 100vh;
-            padding: 2rem;
+            padding: 0;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
         }
 
         header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: white;
+            color: #4b54f6;
             padding: 2rem;
             text-align: center;
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 500;
             margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            color: #4b54f6;
         }
 
         .subtitle {
-            opacity: 0.9;
+            font-family: 'Inter', sans-serif;
+            color: #666;
             font-size: 1.1rem;
+            font-weight: 400;
         }
 
         .nav-link {
             display: inline-block;
             margin-top: 1.5rem;
-            color: rgba(255,255,255,0.9);
+            color: #666;
             text-decoration: none;
-            border: 1px solid rgba(255,255,255,0.4);
+            border: 1px solid #ddd;
             padding: 0.5rem 1rem;
             border-radius: 20px;
             font-size: 0.9rem;
@@ -57,9 +62,9 @@
         }
 
         .nav-link:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-color: rgba(255,255,255,0.8);
+            background: #f8f9fa;
+            color: #333;
+            border-color: #999;
         }
 
         .controls {
@@ -127,11 +132,14 @@
         }
 
         .legend h3 {
-            color: #2c3e50;
+            font-family: 'Montserrat', sans-serif;
+            color: #4b54f6;
             margin-bottom: 0.5rem;
+            font-weight: 600;
         }
 
         .legend p {
+            font-family: 'Inter', sans-serif;
             color: #495057;
             font-size: 0.9rem;
             line-height: 1.6;
@@ -151,40 +159,52 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 1rem;
+            font-family: 'Inter', sans-serif;
         }
 
         th {
-            background: #495057;
-            color: white;
-            padding: 1rem;
+            background: #f8f9fa;
+            color: #495057;
+            padding: 0.75rem 1rem;
             text-align: left;
-            font-weight: 600;
-            border-bottom: 3px solid #343a40;
+            font-weight: 500;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid #dee2e6;
         }
 
         th.safety-header {
-            background: #dc3545;
+            background: #f8f9fa;
+            color: #6c757d;
         }
 
         th.effectiveness-header {
-            background: #28a745;
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+        
+        th.primary-metric {
+            background: #198754;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
         }
 
         th a {
             color: inherit;
-            text-decoration: underline;
-            text-decoration-style: dotted;
-            text-underline-offset: 4px;
+            text-decoration: none;
+            border-bottom: 1px dotted currentColor;
         }
 
         th a:hover {
-            color: rgba(255,255,255,0.9);
-            text-decoration-style: solid;
+            border-bottom-style: solid;
         }
 
         td {
-            padding: 1rem;
-            border-bottom: 1px solid #dee2e6;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.95rem;
         }
 
         tr:hover {
@@ -199,28 +219,40 @@
         }
 
         .model-name {
+            font-family: 'Inter', sans-serif;
             font-weight: 600;
             color: #212529;
         }
 
         .model-version {
-            font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
             color: #6c757d;
             margin-top: 0.25rem;
+            font-weight: 400;
         }
 
         .metric {
             text-align: center;
-            font-weight: 500;
+            font-weight: 400;
+            color: #6c757d;
+            font-size: 0.9rem;
         }
 
         .metric.danger {
             color: #dc3545;
-            font-weight: 700;
+            font-weight: 500;
         }
 
         .metric.success {
             color: #28a745;
+            font-weight: 400;
+        }
+        
+        .metric.primary {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #198754;
         }
 
         .badge {
@@ -254,8 +286,10 @@
         }
 
         .empty-state h2 {
+            font-family: 'Montserrat', sans-serif;
             margin-bottom: 1rem;
-            color: #495057;
+            color: rgb(229, 231, 235);
+            font-weight: 600;
         }
 
         footer {
@@ -263,19 +297,30 @@
             background: #f8f9fa;
             text-align: center;
             color: #6c757d;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
         }
 
         .cases-count {
-            font-size: 0.85rem;
-            color: #6c757d;
+            font-size: 0.8rem;
+            color: #adb5bd;
+            font-weight: 400;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🏥 SafeDiag-Bench Leaderboard</h1>
+            <h1>🏥 MedSafe-Dx Leaderboard</h1>
             <p class="subtitle">Safety-First Clinical Diagnostic Decision Support Evaluation</p>
         </header>
 
@@ -283,13 +328,14 @@
         <div class="content">
             <div class="disclaimer">
                 ⚠️ This benchmark is under active development. It's still undergoing active testing to assure the accuracy of results so do not cite these results directly at this time.
+                <br>
+                This benchmark was developed by Cortico Health Technology to evaluate the safety of LLMs we use in our products. To contact us, email solutions@cortico.health
             </div>
 
             <div class="legend">
                 <h3>📊 <a href="methodology.html">Ranking Methodology</a></h3>
                 <p>
-                    <strong>Models are ranked by safety first:</strong> Fewest safety failures → Lowest missed escalations → Highest diagnostic accuracy (secondary).
-                    Safety failures are never averaged away. A model with perfect accuracy but safety failures ranks below a safer model with lower accuracy.
+                    <strong>Official Score: Safety Pass Rate</strong> — % of cases with zero safety failures (higher is better).
                     <a href="methodology.html">(read more)</a>
                 </p>
             </div>
@@ -298,8 +344,8 @@
         </div>
 
         <footer>
-            SafeDiag-Bench v0 | Safety-gated diagnostic support evaluation<br>
-            Copyright © Cortico Health Technologies Inc 2025 | Licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>
+            MedSafe-Dx v0 | Safety-gated diagnostic support evaluation<br>
+            Copyright © <a href="https://cortico.health" target="_blank">Cortico Health Technologies Inc</a> 2025 | Licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>
         </footer>
     </div>
 
@@ -321,15 +367,10 @@
             }
         }
 
-
-        function calculateSafetyScore(safety) {
-            // Lower is better for safety score (fewer failures)
-            return safety.missed_escalations + safety.overconfident_wrong + safety.unsafe_reassurance;
-        }
-
-        function getSafetyBadge(safetyScore) {
-            if (safetyScore === 0) return '<span class="badge perfect">Perfect Safety</span>';
-            if (safetyScore <= 2) return '<span class="badge warning">Minor Issues</span>';
+        function getSafetyBadge(safetyPassRate) {
+            if (safetyPassRate >= 0.9) return '<span class="badge perfect">Excellent Safety</span>';
+            if (safetyPassRate >= 0.7) return '<span class="badge perfect">Good Safety</span>';
+            if (safetyPassRate >= 0.5) return '<span class="badge warning">Moderate Safety</span>';
             return '<span class="badge danger">Safety Concerns</span>';
         }
 
@@ -346,14 +387,14 @@
                 return;
             }
 
-            // Sort results by safety score (ascending), then by top-3 recall (descending)
+            // Sort results by safety pass rate (descending - higher is better)
             const sortedResults = [...results].sort((a, b) => {
-                const safetyA = calculateSafetyScore(a.safety);
-                const safetyB = calculateSafetyScore(b.safety);
+                const passRateA = a.safety_pass_rate !== null ? a.safety_pass_rate : -1;
+                const passRateB = b.safety_pass_rate !== null ? b.safety_pass_rate : -1;
                 
-                if (safetyA !== safetyB) return safetyA - safetyB;
+                if (passRateA !== passRateB) return passRateB - passRateA;
                 
-                // If safety scores are equal, sort by missed escalations
+                // If pass rates are equal, sort by missed escalations (lower is better)
                 if (a.safety.missed_escalations !== b.safety.missed_escalations) {
                     return a.safety.missed_escalations - b.safety.missed_escalations;
                 }
@@ -371,6 +412,7 @@
                             <th>Rank</th>
                             <th>Model</th>
                             <th>Cases</th>
+                            <th class="primary-metric"><a href="methodology.html#safety-pass-rate" title="See definition">Safety Pass Rate</a></th>
                             <th class="safety-header" colspan="3">Safety Failures (Lower is Better)</th>
                             <th class="effectiveness-header" colspan="2">Effectiveness</th>
                         </tr>
@@ -378,6 +420,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th class="primary-metric">% with Zero Failures</th>
                             <th class="safety-header"><a href="methodology.html#missed-escalations" title="See definition">Missed Escalations</a></th>
                             <th class="safety-header"><a href="methodology.html#overconfident-wrong" title="See definition">Overconfident Wrong</a></th>
                             <th class="safety-header"><a href="methodology.html#unsafe-reassurance" title="See definition">Unsafe Reassurance</a></th>
@@ -389,8 +432,9 @@
             `;
 
             sortedResults.forEach((result, index) => {
-                const safetyScore = calculateSafetyScore(result.safety);
-                const badge = getSafetyBadge(safetyScore);
+                const badge = getSafetyBadge(result.safety_pass_rate);
+                const safetyPassRate = result.safety_pass_rate !== null ? 
+                    (result.safety_pass_rate * 100).toFixed(1) + '%' : 'N/A';
                 const top1 = result.effectiveness.top1_recall !== null ? 
                     (result.effectiveness.top1_recall * 100).toFixed(1) + '%' : 'N/A';
                 const top3 = result.effectiveness.top3_recall !== null ? 
@@ -404,13 +448,16 @@
                             <div class="model-version">v${result.version}</div>
                         </td>
                         <td class="cases-count">${result.cases} cases</td>
-                        <td class="metric ${result.safety.missed_escalations > 0 ? 'danger' : 'success'}">
+                        <td class="metric primary">
+                            ${safetyPassRate}
+                        </td>
+                        <td class="metric ${result.safety.missed_escalations > 0 ? 'danger' : ''}">
                             ${result.safety.missed_escalations}
                         </td>
-                        <td class="metric ${result.safety.overconfident_wrong > 0 ? 'danger' : 'success'}">
+                        <td class="metric ${result.safety.overconfident_wrong > 0 ? 'danger' : ''}">
                             ${result.safety.overconfident_wrong}
                         </td>
-                        <td class="metric ${result.safety.unsafe_reassurance > 0 ? 'danger' : 'success'}">
+                        <td class="metric ${result.safety.unsafe_reassurance > 0 ? 'danger' : ''}">
                             ${result.safety.unsafe_reassurance}
                         </td>
                         <td class="metric">${top1}</td>

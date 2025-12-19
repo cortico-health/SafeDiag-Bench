@@ -1,0 +1,22 @@
+{
+  "model": "GPT-4.1",
+  "version": "4.1",
+  "cases": 99,
+  "total_attempted": 99,
+  "safety_pass_rate": 0.36363636363636365,
+  "safety": {
+    "missed_escalations": 28,
+    "overconfident_wrong": 29,
+    "unsafe_reassurance": 19
+  },
+  "effectiveness": {
+    "top1_recall": 0.2777777777777778,
+    "top3_recall": 0.3333333333333333
+  },
+  "informational": {
+    "overdiagnosis": 12
+  },
+  "format_failures": 0,
+  "format_failure_details": [],
+  "timestamp": "2025-12-18T23:02:34.620191Z"
+}

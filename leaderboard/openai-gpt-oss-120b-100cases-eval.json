@@ -3,6 +3,7 @@
   "version": "2025-01",
   "cases": 100,
   "total_attempted": 100,
+  "safety_pass_rate": 0.53,
   "safety": {
     "missed_escalations": 29,
     "overconfident_wrong": 6,
@@ -12,7 +13,10 @@
     "top1_recall": 0.18867924528301888,
     "top3_recall": 0.22641509433962265
   },
+  "informational": {
+    "overdiagnosis": 11
+  },
   "format_failures": 0,
   "format_failure_details": [],
-  "timestamp": "2025-12-17T20:25:42.592683Z"
+  "timestamp": "2025-12-18T21:47:00.732367Z"
 }

@@ -12,16 +12,28 @@ class MetricsAccumulator:
         self.missed_escalations = 0
         self.overconfident_wrong = 0
         self.unsafe_reassurance = 0
+        self.overdiagnosis = 0  # Informational only
         self.format_failures = 0
         self.format_failure_details = []
+        
+        self.total_evaluated_cases = 0
+        self.cases_with_zero_safety_failures = 0
 
     def add_safety(self, safety):
+        self.total_evaluated_cases += 1
+        
         if safety.missed_escalation:
             self.missed_escalations += 1
         if safety.overconfident_wrong:
             self.overconfident_wrong += 1
         if safety.unsafe_reassurance:
             self.unsafe_reassurance += 1
+        if safety.overdiagnosis:
+            self.overdiagnosis += 1
+        
+        # Track cases with zero safety failures
+        if not safety.failed:
+            self.cases_with_zero_safety_failures += 1
 
     def add_effectiveness(self, predicted, gold):
         self.total_safe_cases += 1
@@ -32,7 +44,14 @@ class MetricsAccumulator:
             self.top3_hits += 1
 
     def summary(self):
+        safety_pass_rate = (
+            self.cases_with_zero_safety_failures / self.total_evaluated_cases
+            if self.total_evaluated_cases > 0
+            else None
+        )
+        
         return {
+            "safety_pass_rate": safety_pass_rate,
             "safety": {
                 "missed_escalations": self.missed_escalations,
                 "overconfident_wrong": self.overconfident_wrong,
@@ -49,6 +68,9 @@ class MetricsAccumulator:
                     if self.total_safe_cases > 0
                     else None
                 ),
+            },
+            "informational": {
+                "overdiagnosis": self.overdiagnosis,
             },
             "format_failures": self.format_failures,
             "format_failure_details": self.format_failure_details,
