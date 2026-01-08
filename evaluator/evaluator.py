@@ -40,8 +40,10 @@ def evaluate(cases_path, predictions_path, model_name, model_version):
 
     # Load predictions (handle both plain list and metadata format)
     predictions_data = load_json(predictions_path)
+    prediction_metadata = None
     if isinstance(predictions_data, dict) and "predictions" in predictions_data:
         predictions_list = predictions_data["predictions"]
+        prediction_metadata = predictions_data.get("metadata")
     else:
         predictions_list = predictions_data
     
@@ -94,5 +96,9 @@ def evaluate(cases_path, predictions_path, model_name, model_version):
         "total_attempted": len(predictions_list),  # Total including format failures
         **metrics.summary(),
     }
+
+    # Include prompt variant from prediction metadata if available
+    if prediction_metadata and "prompt_variant" in prediction_metadata:
+        artifact["prompt_variant"] = prediction_metadata["prompt_variant"]
 
     return artifact

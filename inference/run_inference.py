@@ -10,7 +10,8 @@ from typing import Dict, Any
 import time
 
 from inference.openrouter import call_openrouter, load_cases, write_predictions
-from inference.prompt import SYSTEM_PROMPT, USER_PROMPT_TEMPLATE
+from inference.prompt import USER_PROMPT_TEMPLATE
+from inference.prompt_variants import get_variant, get_variant_names, DEFAULT_VARIANT
 from inference.symptom_decoder import decode_symptoms
 
 
@@ -66,12 +67,13 @@ def format_case_for_prompt(case: Dict[str, Any]) -> str:
 def run_inference_on_case(
     case: Dict[str, Any],
     model: str,
+    system_prompt: str,
     temperature: float = 0.0,
 ) -> Dict[str, Any] | None:
     """Run inference on a single case."""
-    
+
     messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "system", "content": system_prompt},
         {"role": "user", "content": format_case_for_prompt(case)},
     ]
     
@@ -143,7 +145,13 @@ def main():
         default=0.0,
         help="Sampling temperature",
     )
-    
+    parser.add_argument(
+        "--prompt-variant",
+        choices=get_variant_names(),
+        default=DEFAULT_VARIANT,
+        help=f"Prompt variant to use (default: {DEFAULT_VARIANT})",
+    )
+
     args = parser.parse_args()
     
     # Load cases
@@ -162,7 +170,12 @@ def main():
     if args.limit:
         cases = cases[:args.limit]
         print(f"Limited to {args.limit} cases")
-    
+
+    # Resolve prompt variant
+    variant_name = getattr(args, "prompt_variant", DEFAULT_VARIANT)
+    variant = get_variant(variant_name)
+    print(f"Prompt variant: {variant['name']}")
+
     print(f"Running inference on {len(cases)} cases...")
     
     predictions = []
@@ -175,6 +188,7 @@ def main():
         prediction = run_inference_on_case(
             case,
             model=args.model,
+            system_prompt=variant["system_prompt"],
             temperature=args.temperature,
         )
         
@@ -193,6 +207,7 @@ def main():
     # Build output metadata
     output_metadata = {
         "model": args.model,
+        "prompt_variant": variant_name,
         "temperature": args.temperature,
         "total_cases": len(predictions) + failed,
         "successful_predictions": len(predictions),

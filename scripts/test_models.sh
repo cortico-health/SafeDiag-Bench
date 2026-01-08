@@ -8,12 +8,17 @@ set -e  # Exit on error
 
 # Check arguments
 if [ "$#" -lt 2 ]; then
-    echo "Usage: $0 <num_cases> <model1> <model2> [model3] ..."
+    echo "Usage: $0 <num_cases> <model1> [model2] ... [--variant baseline|guardrails]"
+    echo ""
+    echo "Options:"
+    echo "  --variant    Prompt variant to use (default: baseline)"
+    echo "               baseline   - No safety guardrails (tests default behavior)"
+    echo "               guardrails - Safety-focused prompt prepended"
     echo ""
     echo "Examples:"
     echo "  $0 1 anthropic/claude-sonnet-4.5"
     echo "  $0 10 anthropic/claude-haiku-4.5 openai/gpt-4o-mini"
-    echo "  $0 100 anthropic/claude-haiku-4.5 anthropic/claude-sonnet-4.5 openai/gpt-4o-mini"
+    echo "  $0 100 anthropic/claude-sonnet-4.5 --variant guardrails"
     echo ""
     echo "Available models (examples):"
     echo "  anthropic/claude-haiku-4.5"
@@ -26,13 +31,39 @@ if [ "$#" -lt 2 ]; then
 fi
 
 NUM_CASES="$1"
-shift  # Remove first argument, rest are models
+shift  # Remove first argument
 
-# Build models array
-MODELS=("$@")
+# Parse --variant flag and build models array
+VARIANT="baseline"
+MODELS=()
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --variant)
+            VARIANT="$2"
+            shift 2
+            ;;
+        *)
+            MODELS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# Validate variant
+if [[ "$VARIANT" != "baseline" && "$VARIANT" != "guardrails" ]]; then
+    echo "Error: Invalid variant '$VARIANT'. Must be 'baseline' or 'guardrails'"
+    exit 1
+fi
+
+# Validate we have at least one model
+if [ ${#MODELS[@]} -lt 1 ]; then
+    echo "Error: At least one model is required"
+    exit 1
+fi
 
 echo "========================================"
 echo "Testing ${#MODELS[@]} Models on $NUM_CASES Cases"
+echo "Prompt variant: $VARIANT"
 echo "========================================"
 
 # Configuration
@@ -67,7 +98,7 @@ echo "========================================"
 # Step 2: Run inference for each model
 for model in "${MODELS[@]}"; do
     model_safe=$(echo "$model" | sed 's/\//-/g')
-    predictions_path="results/artifacts/${model_safe}-${NUM_CASES}cases.json"
+    predictions_path="results/${VARIANT}/${model_safe}-${NUM_CASES}cases.json"
     
     echo ""
     echo "Model: $model"
@@ -80,6 +111,7 @@ for model in "${MODELS[@]}"; do
             --cases "$TEST_SET" \
             --model "$model" \
             --out "$predictions_path" \
+            --prompt-variant "$VARIANT" \
             --temperature 0.0
         echo "✓ Inference complete"
     fi
@@ -93,8 +125,8 @@ echo "========================================"
 # Step 3: Evaluate each model
 for model in "${MODELS[@]}"; do
     model_safe=$(echo "$model" | sed 's/\//-/g')
-    predictions_path="results/artifacts/${model_safe}-${NUM_CASES}cases.json"
-    eval_path="results/artifacts/${model_safe}-${NUM_CASES}cases-eval.json"
+    predictions_path="results/${VARIANT}/${model_safe}-${NUM_CASES}cases.json"
+    eval_path="results/${VARIANT}/${model_safe}-${NUM_CASES}cases-eval.json"
     
     echo ""
     echo "Model: $model"
@@ -125,8 +157,8 @@ echo "========================================"
 # Step 4: Generate review transcripts
 for model in "${MODELS[@]}"; do
     model_safe=$(echo "$model" | sed 's/\//-/g')
-    predictions_path="results/artifacts/${model_safe}-${NUM_CASES}cases.json"
-    transcript_path="results/artifacts/${model_safe}-${NUM_CASES}cases-transcript.txt"
+    predictions_path="results/${VARIANT}/${model_safe}-${NUM_CASES}cases.json"
+    transcript_path="results/${VARIANT}/${model_safe}-${NUM_CASES}cases-transcript.txt"
     
     if [ ! -f "$predictions_path" ]; then
         continue
@@ -152,7 +184,7 @@ echo ""
 # Step 5: Display results
 for model in "${MODELS[@]}"; do
     model_safe=$(echo "$model" | sed 's/\//-/g')
-    eval_path="results/artifacts/${model_safe}-${NUM_CASES}cases-eval.json"
+    eval_path="results/${VARIANT}/${model_safe}-${NUM_CASES}cases-eval.json"
     
     if [ ! -f "$eval_path" ]; then
         echo "Model: $model"
@@ -181,13 +213,16 @@ echo ""
 echo "Review clinical transcripts (for doctor review):"
 for model in "${MODELS[@]}"; do
     model_safe=$(echo "$model" | sed 's/\//-/g')
-    echo "  cat results/artifacts/${model_safe}-${NUM_CASES}cases-transcript.txt"
+    echo "  cat results/${VARIANT}/${model_safe}-${NUM_CASES}cases-transcript.txt"
 done
 echo ""
 echo "Compare safety metrics:"
-echo "  jq '.safety' results/artifacts/*-${NUM_CASES}cases-eval.json"
+echo "  jq '.safety' results/${VARIANT}/*-${NUM_CASES}cases-eval.json"
 echo ""
 echo "Compare effectiveness metrics:"
-echo "  jq '.effectiveness' results/artifacts/*-${NUM_CASES}cases-eval.json"
+echo "  jq '.effectiveness' results/${VARIANT}/*-${NUM_CASES}cases-eval.json"
+echo ""
+echo "Compare variants (if both run):"
+echo "  jq '.safety' results/baseline/*-eval.json results/guardrails/*-eval.json"
 echo ""
 
